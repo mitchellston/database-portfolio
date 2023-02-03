@@ -1,0 +1,14 @@
+.table {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #e6e6e6;
+  border-color: #e6e6e6;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  margin: 0 0 20px;
+  overflow: hidden;
+  th,
+  td {
+    padding: 10px 15px;
+  }
+}
