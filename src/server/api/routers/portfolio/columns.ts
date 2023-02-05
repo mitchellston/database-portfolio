@@ -87,6 +87,10 @@ export const columnsRouter = createTRPCRouter({
             type: input.relationShip?.type,
             tableId: input.tableId,
             relationTo: input.relationShip?.table,
+            order:
+              (await prisma.column.count({
+                where: { tableId: input.tableId },
+              })) + 1,
           },
         });
       }
@@ -94,6 +98,9 @@ export const columnsRouter = createTRPCRouter({
         data: {
           name: input.name,
           type: input.type,
+          order:
+            (await prisma.column.count({ where: { tableId: input.tableId } })) +
+            1,
           tableId: input.tableId,
         },
       });
@@ -134,16 +141,12 @@ export const columnsRouter = createTRPCRouter({
         },
       });
     }),
-  updateColumn: protectedProcedure
-
+  updateOrder: protectedProcedure
     .input(
-      z
-        .object({
-          id: z.string(),
-          name: z.string().min(1, "Er moet een naam zijn"),
-          type: z.string(),
-        })
-        .required()
+      z.object({
+        id: z.string(),
+        order: z.number(),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       const column = await prisma.column
@@ -172,8 +175,7 @@ export const columnsRouter = createTRPCRouter({
           id: column.id,
         },
         data: {
-          name: input.name,
-          type: input.type,
+          order: input.order,
         },
       });
     }),

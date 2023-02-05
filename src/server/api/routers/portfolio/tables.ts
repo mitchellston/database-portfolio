@@ -15,7 +15,6 @@ export const tablesRouter = createTRPCRouter({
         .object({ id: z.string().nullable().optional(), page: z.string() })
         .required()
     )
-
     .query(async ({ input }) => {
       const where =
         input.id === null
@@ -136,7 +135,6 @@ export const tablesRouter = createTRPCRouter({
           message: "Table already exists",
         });
       }
-
       return await prisma.tables.update({
         where: {
           id: table.id,

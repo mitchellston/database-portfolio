@@ -3,8 +3,9 @@ import type { NextPage } from "next/types";
 import { useState } from "react";
 import { api } from "../../../utils/api";
 import Loading from "../../utils/loading";
-import SetType from "../setType";
+import Colunn from "./column";
 import { CreateColumn } from "./createColumn";
+import EditData from "./createData";
 type propsFetch = {
   table: Tables;
   userId: string;
@@ -30,26 +31,8 @@ const List: NextPage<propsList> = (props) => {
 
   return (
     <>
-      {ListColumns.map((column) => {
-        return (
-          <button className="text-center" key={column.name}>
-            <div className="flex">
-              <div className="flex items-center justify-center text-gray-500">
-                [
-                <SetType
-                  userId={props.userId}
-                  type={column.type}
-                  relationTo={column.relationTo}
-                />
-                ]{" "}
-              </div>
-              <div className="flex-grow overflow-x-auto">{column.name}</div>
-              <div className="ml-2 flex items-center justify-center font-serif">
-                &#x25B6;
-              </div>
-            </div>
-          </button>
-        );
+      {ListColumns.map((column, index) => {
+        return <Colunn column={column} userId={props.userId} key={index} />;
       })}
 
       <CreateColumn
@@ -60,6 +43,8 @@ const List: NextPage<propsList> = (props) => {
         }}
         tableId={props.table.id}
       />
+      <hr />
+      <EditData columns={ListColumns} tableID={props.table.id} />
     </>
   );
 };
