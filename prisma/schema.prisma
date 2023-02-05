@@ -108,6 +108,7 @@ model Rows {
     id       String @id @default(cuid())
     column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade) //, onDelete: Cascade)
     columnId String
+    rowId    String
     data     String
 
     @@index([columnId])

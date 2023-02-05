@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../../trpc";
+import {
+  createTRPCRouter,
+  publicProcedure,
+  protectedProcedure,
+} from "../../trpc";
 import { prisma } from "../../../db";
 import { TRPCError } from "@trpc/server";
 import type { Rows } from "@prisma/client";
@@ -58,5 +62,139 @@ export const dataRouter = createTRPCRouter({
       } catch (error) {
         console.log(error);
       }
+    }),
+  createRow: protectedProcedure
+    .input(
+      z.object({
+        tableId: z.string(),
+        data: z.array(z.object({ columnId: z.string(), data: z.string() })),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const table = await prisma.tables
+        .findFirstOrThrow({
+          where: {
+            id: input.tableId,
+            userId: ctx.session.user.id,
+          },
+        })
+        .catch(() => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Table not found",
+          });
+        });
+      const columns = await prisma.column.findMany({
+        where: {
+          tableId: table.id,
+          NOT: {
+            type: {
+              in: ["many", "one"],
+            },
+          },
+        },
+      });
+
+      for (const column of input.data) {
+        if (!columns.find((c) => c.id === column.columnId)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Column not found",
+          });
+        }
+      }
+      if (columns.length !== input.data.length)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Not all columns are filled",
+        });
+      //generate row id
+      let rowId = "";
+      while (rowId == "") {
+        const id =
+          Math.random().toString(36).substring(2, 15) +
+          Math.random().toString(36).substring(2, 15);
+        await prisma.rows
+          .findFirstOrThrow({
+            where: {
+              rowId: id,
+            },
+          })
+          .catch(() => {
+            rowId = id;
+          });
+      }
+      const newRows: { columnId: string; row: Rows }[] = [];
+      for (const row of input.data) {
+        newRows.push({
+          row: await prisma.rows.create({
+            data: {
+              rowId: rowId,
+              data: row.data,
+              columnId: row.columnId,
+            },
+          }),
+          columnId: row.columnId,
+        });
+      }
+      return newRows;
+    }),
+  deleteRow: protectedProcedure
+    .input(
+      z.object({
+        tableId: z.string(),
+        rowId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      // check if table exists
+      const table = await prisma.tables
+        .findFirstOrThrow({
+          where: {
+            id: input.tableId,
+            userId: ctx.session.user.id,
+          },
+        })
+        .catch(() => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Table not found",
+          });
+        });
+      // get columns without many and one
+      const columns = await prisma.column.findMany({
+        where: {
+          tableId: table.id,
+          NOT: {
+            type: {
+              in: ["many", "one"],
+            },
+          },
+        },
+      });
+      // check if row exists
+      const row = await prisma.rows.findMany({
+        where: {
+          rowId: input.rowId,
+          columnId: {
+            in: columns.map((c) => c.id),
+          },
+        },
+      });
+      if (row.length != columns.length) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Row not found",
+        });
+      }
+      // delete row
+      return await prisma.rows.deleteMany({
+        where: {
+          rowId: input.rowId,
+          columnId: {
+            in: columns.map((c) => c.id),
+          },
+        },
+      });
     }),
 });

@@ -2,7 +2,6 @@ import type { NextPage } from "next/types";
 import { api } from "../../../utils/api";
 import Loading from "../../utils/loading";
 import Table from "./tables";
-import LineTo from "react-lineto";
 type props = {
   userId: string;
   pageId: string;

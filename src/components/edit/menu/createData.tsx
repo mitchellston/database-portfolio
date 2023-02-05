@@ -11,11 +11,24 @@ type props = {
 };
 const EditData: NextPage<props> = (props) => {
   const [createNewDataMenu, setCreateNewDataMenu] = useState(false);
+  const [newData, setNewData] = useState<{ columnId: string; data: string }[]>(
+    []
+  );
   const getData = api.portfolio.data.getRows.useQuery({
     columnID: null,
     tableID: props.tableID,
   });
-  if (getData.isSuccess) console.log(getData.data);
+  const createRow = api.portfolio.data.createRow.useMutation();
+  const setInData = (index: number, columnId: string, data: string) => {
+    if (newData[index] === undefined) {
+      setNewData([...newData, { columnId: columnId, data: data }]);
+    } else {
+      const newDataCopy = newData;
+      newDataCopy[index] = { columnId: columnId, data: data };
+      setNewData(newDataCopy);
+    }
+  };
+
   return (
     <>
       <button
@@ -48,6 +61,8 @@ const EditData: NextPage<props> = (props) => {
                   <tr>
                     <th>Nieuwe row</th>
                     {props.columns.map((column, index) => {
+                      if (column.type == "many" || column.type == "one")
+                        return <></>;
                       return <th key={index}>{column.name}</th>;
                     })}
                   </tr>
@@ -60,30 +75,46 @@ const EditData: NextPage<props> = (props) => {
                         <td key={index}>
                           {column.type === "string" && (
                             <input
+                              onChange={(e) => {
+                                setInData(index, column.id, e.target.value);
+                              }}
                               className="border border-stone-700"
                               type="text"
                             />
                           )}
                           {column.type === "number" && (
                             <input
+                              onChange={(e) => {
+                                setInData(index, column.id, e.target.value);
+                              }}
                               className="border border-stone-700"
                               type="number"
                             />
                           )}
                           {column.type === "boolean" && (
-                            <select>
+                            <select
+                              onChange={(e) => {
+                                setInData(index, column.id, e.target.value);
+                              }}
+                            >
                               <option value="true">true</option>
                               <option value="false">false</option>
                             </select>
                           )}
                           {column.type === "date" && (
                             <input
+                              onChange={(e) => {
+                                setInData(index, column.id, e.target.value);
+                              }}
                               className="border border-stone-700"
                               type="date"
                             />
                           )}
                           {column.type === "markdown" && (
                             <textarea
+                              onChange={(e) => {
+                                setInData(index, column.id, e.target.value);
+                              }}
                               className="border border-stone-700"
                               // only height is allowed to be changed
                               style={{ resize: "vertical" }}
@@ -92,12 +123,19 @@ const EditData: NextPage<props> = (props) => {
                         </td>
                       );
                     })}
-                    <td
-                      onClick={() => {
-                        return;
-                      }}
-                    >
-                      Create
+                    <td>
+                      <button
+                        onClick={() => {
+                          console.log(newData);
+                          createRow.mutate({
+                            tableId: props.tableID,
+                            data: newData,
+                          });
+                          return;
+                        }}
+                      >
+                        Create
+                      </button>
                     </td>
                   </tr>
                 </tbody>
