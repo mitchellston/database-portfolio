@@ -18,21 +18,25 @@ export const columnsRouter = createTRPCRouter({
     }),
   createColumn: protectedProcedure
     .input(
-      z
-        .object({
-          name: z.string().min(1, "Er moet een naam zijn"),
-          tableId: z.string().min(1),
-          type: z.enum([
-            "string",
-            "number",
-            "date",
-            "boolean",
-            "relation",
-            "markdown",
-            "image",
-          ]),
-        })
-        .required()
+      z.object({
+        name: z.string().min(1, "Er moet een naam zijn"),
+        tableId: z.string().min(1),
+        type: z.enum([
+          "string",
+          "number",
+          "date",
+          "boolean",
+          "relation",
+          "markdown",
+          "image",
+        ]),
+        relationShip: z
+          .object({
+            type: z.enum(["one", "many"]),
+            table: z.string().optional(),
+          })
+          .optional(),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       await prisma.tables
@@ -58,6 +62,32 @@ export const columnsRouter = createTRPCRouter({
         throw new TRPCError({
           code: "CONFLICT",
           message: "Column already exists in this table",
+        });
+      }
+      if (input.type === "relation") {
+        if (
+          !input.relationShip?.table ||
+          !input.relationShip?.type ||
+          input.relationShip.table == ""
+        ) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "RelationShip is required",
+          });
+        }
+        if (input.relationShip.table === input.tableId) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "RelationShip can't be the same table",
+          });
+        }
+        return await prisma.column.create({
+          data: {
+            name: input.name,
+            type: input.relationShip?.type,
+            tableId: input.tableId,
+            relationTo: input.relationShip?.table,
+          },
         });
       }
       return await prisma.column.create({

@@ -10,38 +10,25 @@ import { TRPCError } from "@trpc/server";
 
 export const tablesRouter = createTRPCRouter({
   getTable: publicProcedure
-    .input(z.object({ id: z.string().nullable(), page: z.string() }).required())
-    .output(
-      z.array(
-        z.object({
-          name: z.string(),
-          position: z.object({ top: z.number(), left: z.number() }),
-        })
-      )
+    .input(
+      z
+        .object({ id: z.string().nullable().optional(), page: z.string() })
+        .required()
     )
+
     .query(async ({ input }) => {
       const where =
         input.id === null
-          ? { pageId: input.page }
+          ? { userId: input.page }
           : {
               id: input.id,
-              pageId: input.page,
+              userId: input.page,
             };
 
       const tables = await prisma.tables.findMany({
         where: where,
-        select: {
-          name: true,
-          left: true,
-          top: true,
-        },
       });
-      return tables
-        .filter((table) => table.name !== null)
-        .map((table) => ({
-          position: { top: table.top, left: table.left },
-          name: table.name,
-        }));
+      return tables;
     }),
   createTable: protectedProcedure
     .input(
@@ -108,7 +95,7 @@ export const tablesRouter = createTRPCRouter({
         },
       });
     }),
-  updateTable: protectedProcedure
+  updateTableName: protectedProcedure
     .input(
       z
         .object({
@@ -131,6 +118,7 @@ export const tablesRouter = createTRPCRouter({
             message: "Unauthorized",
           });
         });
+
       const count = await prisma.tables
         .count({ where: { name: input.name, userId: ctx.session.user.id } })
         .catch(() => {
@@ -148,12 +136,47 @@ export const tablesRouter = createTRPCRouter({
           message: "Table already exists",
         });
       }
+
       return await prisma.tables.update({
         where: {
           id: table.id,
         },
         data: {
           name: input.name,
+        },
+      });
+    }),
+  updateTablePosition: protectedProcedure
+    .input(
+      z
+        .object({
+          id: z.string(),
+          position: z.object({ top: z.number(), left: z.number() }),
+        })
+        .required()
+    )
+    .mutation(async ({ input, ctx }) => {
+      const table = await prisma.tables
+        .findFirstOrThrow({
+          where: {
+            id: input.id,
+            userId: ctx.session.user.id,
+          },
+        })
+        .catch(() => {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Unauthorized",
+          });
+        });
+
+      return await prisma.tables.update({
+        where: {
+          id: table.id,
+        },
+        data: {
+          left: input.position.left,
+          top: input.position.top,
         },
       });
     }),

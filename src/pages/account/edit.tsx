@@ -8,7 +8,9 @@ import Loading from "../../components/utils/loading";
 import List from "../../components/edit/menu";
 import Link from "next/link";
 
-import Dragable from "../../components/utils/dragable";
+import Viewer from "../../components/edit/viewer";
+import type { Tables } from "@prisma/client";
+import { useState } from "react";
 const Auth: NextPage = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -28,6 +30,7 @@ type PageProps = {
   id: string;
 };
 const Page: NextPage<PageProps> = (props) => {
+  const router = useRouter();
   const User = api.portfolio.users.getUser.useQuery({
     id: props.id,
   });
@@ -43,54 +46,59 @@ const Page: NextPage<PageProps> = (props) => {
         </main>
       </>
     );
-  if (User.isError)
+  if (User.isError) {
+    router.push("/auth/login").catch((err) => {
+      console.log(err);
+    });
     return (
       <>
         <Head>
           <title>Portfolio edit - Error</title>
         </Head>
-        <main className="h-screen w-screen bg-gradient-to-t from-slate-600 to-slate-300 dark:to-slate-800">
-          <div className="flex h-full w-full flex-col ">
-            <div className="flex h-full w-full max-w-md flex-col  space-y-4 rounded-lg bg-white p-4 shadow-lg dark:bg-slate-800">
-              <h1 className="text-center text-2xl font-bold text-slate-900 dark:text-white">
-                Error
-              </h1>
-            </div>
-          </div>
-        </main>
+        <main className="h-screen w-screen bg-gradient-to-t from-slate-600 to-slate-300 dark:to-slate-800"></main>
       </>
     );
+  }
 
   return (
     <>
       <Head>
         <title>Portfolio edit - {User.data?.name}</title>
       </Head>
-      <main className="h-screen w-screen bg-gradient-to-t from-slate-600 to-slate-300 dark:to-slate-800">
-        <div className="flex h-full w-full flex-row ">
-          <div className="flex h-full max-h-full w-full max-w-md flex-col space-y-4 rounded-lg bg-white p-4 shadow-lg dark:bg-slate-800">
-            <h1 className="text-center text-2xl font-bold text-slate-900 dark:text-white">
-              Edit your portfolio
-            </h1>
-            <hr />
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-              Tables
-            </h2>
-
-            <List tables={User.data?.tables} />
-            <Link href={`/portfolio/${props.id}`}>Bekijk portfolio</Link>
-          </div>
-          <div className="relative flex-grow ">
-            <Dragable
-              onStop={(data) => {
-                console.log(data);
-              }}
-            >
-              <div className="h-10 w-10 bg-red-600">TEST</div>
-            </Dragable>
-          </div>
-        </div>
-      </main>
+      <Editor
+        tables={User.data?.tables || []}
+        pageId={props.id}
+        userId={props.id}
+      />
     </>
+  );
+};
+type propsEditor = {
+  tables: Tables[];
+  userId: string;
+  pageId: string;
+};
+const Editor: NextPage<propsEditor> = (props) => {
+  return (
+    <main className="h-screen w-screen">
+      <div className="fixed h-screen  w-screen bg-gradient-to-t from-slate-600 to-slate-300 dark:to-slate-800"></div>
+      <div className="flex h-full w-full flex-row">
+        <div className="z-10 flex h-full max-h-full w-full max-w-md flex-col space-y-4 rounded-lg bg-white p-4 shadow-lg dark:bg-slate-800">
+          <h1 className="text-center text-2xl font-bold text-slate-900 dark:text-white">
+            Edit your portfolio
+          </h1>
+          <hr />
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+            Tables
+          </h2>
+
+          <List userId={props.userId} tables={props.tables} />
+          <Link href={`/portfolio/${props.userId}`}>Bekijk portfolio</Link>
+        </div>
+        <div className="relative flex-grow ">
+          <Viewer userId={props.userId} pageId={props.pageId} />
+        </div>
+      </div>
+    </main>
   );
 };

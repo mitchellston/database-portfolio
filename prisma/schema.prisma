@@ -71,27 +71,30 @@ model VerificationToken {
 }
 
 model Tables {
-    id      String   @id @default(cuid())
-    User    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId  String
-    name    String
-    top     Float
-    left    Float
-    columns Column[]
+    id            String   @id @default(cuid())
+    User          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId        String
+    name          String
+    top           Float
+    left          Float
+    columns       Column[] @relation("parent")
+    relationShips Column[] @relation("relationship")
 
     @@index([userId])
 }
 
 model Column {
-    id       String  @id @default(cuid())
-    table    Tables  @relation(fields: [tableId], references: [id], onDelete: Cascade) //, onDelete: Cascade) 
-    tableId  String
-    type     String
-    name     String
-    rows     Rows[]
-    columnId String?
+    id            String  @id @default(cuid())
+    table         Tables  @relation("parent", fields: [tableId], references: [id], onDelete: Cascade) //, onDelete: Cascade) 
+    tableId       String
+    type          String
+    name          String  @unique
+    rows          Rows[]
+    relationShips Tables? @relation("relationship", fields: [relationTo], references: [id])
+    relationTo    String?
 
     @@index([tableId])
+    @@index([relationTo])
 }
 
 // enum types {
@@ -101,19 +104,10 @@ model Column {
 //     Date
 // }
 model Rows {
-    id       String  @id @default(cuid())
-    column   Column  @relation(fields: [columnId], references: [id], onDelete: Cascade) //, onDelete: Cascade)
+    id       String @id @default(cuid())
+    column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade) //, onDelete: Cascade)
     columnId String
-    cells    Cells[]
+    data     String
 
     @@index([columnId])
-}
-
-model Cells {
-    id     String @id @default(cuid())
-    rows   Rows   @relation(fields: [rowsId], references: [id], onDelete: Cascade) //, onDelete: Cascade)
-    rowsId String
-    data   String
-
-    @@index([rowsId])
 }

@@ -7,6 +7,7 @@ import List from "./ListColumns";
 type TableProps = {
   table: Tables;
   onError?: (error: string) => void;
+  userId: string;
 };
 const Table: NextPage<TableProps> = (props) => {
   const [tableInfo, setTableInfo] = useState<boolean | undefined>(false);
@@ -17,7 +18,7 @@ const Table: NextPage<TableProps> = (props) => {
       if (props.onError) props.onError(error.message);
     },
   });
-  const renameTable = api.portfolio.tables.updateTable.useMutation({
+  const renameTable = api.portfolio.tables.updateTableName.useMutation({
     onError: (error) => {
       if (props.onError) props.onError(error.message);
     },
@@ -89,7 +90,7 @@ const Table: NextPage<TableProps> = (props) => {
               DELETE
             </span>
           </p>
-          <List table={props.table} />
+          <List userId={props.userId} table={props.table} />
           <hr />
         </div>
       )}

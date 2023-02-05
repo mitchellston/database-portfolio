@@ -5,15 +5,19 @@ import { CreateTable } from "./createTable";
 import Table from "./Table";
 type props = {
   tables: Tables[];
+  userId: string;
+  onChange?: (table: Tables[]) => void;
 };
 const List: NextPage<props> = (props) => {
   const [tables, setTables] = useState(props.tables);
   const [error, setError] = useState<string | null>(null);
+
   return (
     <>
       <div className="flex-grow overflow-y-auto">
         {tables.map((table, index) => (
           <Table
+            userId={props.userId}
             onError={(err) => {
               setError(err);
             }}
