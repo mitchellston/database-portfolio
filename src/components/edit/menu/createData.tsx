@@ -40,7 +40,7 @@ const EditData: NextPage<props> = (props) => {
   };
   //remove many and one columns from columns
   const columns = props.columns.filter((column) => {
-    column.type != "many" && column.type != "one";
+    column.type == "many" || column.type == "one";
   });
   return (
     <>
