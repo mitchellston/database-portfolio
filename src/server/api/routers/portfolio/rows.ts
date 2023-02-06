@@ -197,11 +197,6 @@ export const dataRouter = createTRPCRouter({
       const columns = await prisma.column.findMany({
         where: {
           tableId: table.id,
-          NOT: {
-            type: {
-              in: ["many", "one"],
-            },
-          },
         },
       });
       // check if row exists
