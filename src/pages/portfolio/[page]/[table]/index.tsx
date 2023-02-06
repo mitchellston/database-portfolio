@@ -28,7 +28,7 @@ const Fetch: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="min-screen h-screen bg-black">
+      <main className="min-screen h-screen bg-zinc-900">
         <div>
           <button
             onClick={() => {
@@ -43,7 +43,22 @@ const Fetch: NextPage = () => {
         {User.isError ? (
           <p className="text-center text-red-700">error</p>
         ) : null}
-        {User.isSuccess && <TableData tableID={router.query.table as string} />}
+        {User.isSuccess && (
+          <>
+            <h1 className="p-5 text-white">
+              {User.data.tables
+                .filter((table) => {
+                  return table.id == (router.query.table as string);
+                })
+                .map((table) => {
+                  return table.name;
+                })}
+            </h1>
+            <div className="flex h-full w-full justify-center">
+              <TableData tableID={router.query.table as string} />
+            </div>
+          </>
+        )}
       </main>
     </>
   );
@@ -60,19 +75,22 @@ const TableData: NextPage<props> = (props) => {
 
   return (
     <>
-      <div className="h-full w-full">
+      <div>
         {getData.isLoading ? <Loading /> : null}
         {getData.isError ? (
           <p className="text-center text-red-700">error</p>
         ) : null}
         {getData.isSuccess && getData.data != null && (
-          <table className="border-collapse border">
+          <table className="w-screen border-collapse border">
             <thead>
-              <tr className="">
+              <tr>
                 {getData.data.map((column, index) => {
                   return (
-                    <th key={index} className="border border-white text-white">
-                      [{column.column.type}]{column.column.name}
+                    <th key={index} className=" border border-white text-white">
+                      <span className="text-gray-300">
+                        [{column.column.type}]
+                      </span>{" "}
+                      {column.column.name}
                     </th>
                   );
                 })}

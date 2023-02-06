@@ -93,7 +93,12 @@ const Editor: NextPage<propsEditor> = (props) => {
           </h2>
 
           <List userId={props.userId} tables={props.tables} />
-          <Link href={`/portfolio/${props.userId}`}>Bekijk portfolio</Link>
+          <Link
+            className="text-black dark:text-white"
+            href={`/portfolio/${props.userId}`}
+          >
+            Bekijk portfolio
+          </Link>
         </div>
         <div className="relative flex-grow ">
           <Viewer userId={props.userId} pageId={props.pageId} />

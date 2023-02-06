@@ -31,7 +31,7 @@ const LoggedIn: NextPage = () => {
     );
   }
   return (
-    <div className="absolute right-0 top-0 z-50 flex min-w-min flex-row items-center justify-center rounded-full bg-white dark:bg-slate-900">
+    <div className="fixed right-0 top-0 z-50 flex min-w-min flex-row items-center justify-center rounded-full bg-white dark:bg-slate-900">
       <div className="p-1">
         <p className="text-xl font-bold text-slate-600 ">{session.user.name}</p>
       </div>
