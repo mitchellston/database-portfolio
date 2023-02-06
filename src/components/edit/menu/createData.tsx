@@ -16,13 +16,29 @@ const EditData: NextPage<props> = (props) => {
   const [newData, setNewData] = useState<{ columnId: string; data: string }[]>(
     []
   );
+  const [data, setData] = useState<
+    {
+      columnId: string;
+      column: Column;
+      rows: Rows[];
+    }[]
+  >([]);
   // used to store error
   const [error, setError] = useState<string | null>(null);
 
-  const getData = api.portfolio.data.getRows.useQuery({
-    columnID: null,
-    tableID: props.tableID,
-  });
+  const getData = api.portfolio.data.getRows.useQuery(
+    {
+      columnID: null,
+      tableID: props.tableID,
+    },
+    {
+      onSuccess: (data) => {
+        if (data != undefined) {
+          setData(data);
+        }
+      },
+    }
+  );
 
   const createRow = api.portfolio.data.createRow.useMutation({
     onSuccess: (data) => {
@@ -199,7 +215,7 @@ const EditData: NextPage<props> = (props) => {
                         onError={(error) => {
                           setError(error);
                         }}
-                        row={getData.data}
+                        row={data}
                         tableId={props.tableID}
                       />
                     </tbody>
