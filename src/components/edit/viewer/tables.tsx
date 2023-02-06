@@ -55,7 +55,7 @@ const Table: NextPage<props> = (props) => {
                 return (
                   <p key={index} className="text-slate-900 dark:text-white">
                     <SetType
-                      relationTo={column.relationTo}
+                      relationTo={column.relationShipTableId as string}
                       type={column.type}
                       userId={props.userId}
                     />

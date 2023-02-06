@@ -33,7 +33,7 @@ const Colunn: NextPage<props> = (props) => {
                 <SetType
                   userId={props.userId}
                   type={props.column.type}
-                  relationTo={props.column.relationTo}
+                  relationTo={props.column.relationShipTableId as string}
                 />
                 ]{" "}
               </div>
