@@ -18,7 +18,7 @@ const LoggedIn: NextPage = () => {
     !session?.user?.name
   ) {
     return (
-      <div className="absolute top-0 right-0 flex flex-row items-center justify-center rounded-full bg-white dark:bg-slate-900">
+      <div className="fixed top-0 right-0 z-50 flex flex-row items-center justify-center rounded-full bg-white dark:bg-slate-900">
         <div className="p-1">
           <Link
             href={"/auth/login"}
