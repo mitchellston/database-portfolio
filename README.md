@@ -1,28 +1,44 @@
-# Create T3 App
+# Portfolio
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A web application to create database portfolios
 
-## What's next? How do I make an app with this?
+---
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Getting Started
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+1. Create a .env file.
+```
+# Since .env is gitignored, you can use .env.example to build a new `.env` file when you clone the repo.
+# Keep this file up-to-date when you add new variables to `.env`.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+# This file will be committed to version control, so make sure not to have any secrets in it.
+# If you are cloning this repo, create a copy of this file named `.env` and populate it with your secrets.
 
-## Learn More
+# When adding additional env variables, the schema in /env/schema.mjs should be updated accordingly
+# Prisma
+DATABASE_URL=file:./db.sqlite
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+# Next Auth
+# You can generate the secret via 'openssl rand -base64 32' on Linux
+# More info: https://next-auth.js.org/configuration/options#secret
+# NEXTAUTH_SECRET=
+NEXTAUTH_URL=http://localhost:3000
+# JWT secret
+JWT_SECRET=JWT_SECRET
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+# Discord oauth client id and secret
+# https://discord.com/developers/applications
+DISCORD_CLIENT_ID=DISCORD_CLIENT_ID
+DISCORD_CLIENT_SECRET=DISCORD_CLIENT_SECRET
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+# Github oauth client id and secret
+# https://github.com/settings/developers
+GITHUB_CLIENT_ID=GITHUB_CLIENT_ID
+GITHUB_CLIENT_SECRET=GITHUB_SECRET_ID
+```
 
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+2. Start the dev server
+```bash
+pnpm dev
+```
+3. Go to [localhost:3000](http://localhost:3000) to see the application
