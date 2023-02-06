@@ -143,6 +143,7 @@ const EditData: NextPage<props> = (props) => {
                     <td>
                       <button
                         onClick={() => {
+                          setNewData([]);
                           createRow.mutate({
                             tableId: props.tableID,
                             data: newData,
