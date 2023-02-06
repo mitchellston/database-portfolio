@@ -51,7 +51,7 @@ const Modal: NextPage<props> = (props) => {
           <div className="flex h-full w-full flex-col">
             <div className="flex w-full flex-row">
               <h2
-                className="flex-grow "
+                className="ml-4 flex-grow"
                 style={{
                   fontSize: props.title.size.toString() + "rem",
                   color: props.title.color,

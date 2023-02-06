@@ -84,7 +84,7 @@ export const dataRouter = createTRPCRouter({
             message: "Table not found",
           });
         });
-      const columns = await prisma.column.findMany({
+      let columns = await prisma.column.findMany({
         where: {
           tableId: table.id,
           NOT: {
@@ -118,14 +118,23 @@ export const dataRouter = createTRPCRouter({
           .findFirstOrThrow({
             where: {
               rowId: id,
+              column: {
+                tableId: table.id,
+              },
             },
           })
           .catch(() => {
             rowId = id;
           });
       }
+      columns = await prisma.column.findMany({
+        where: {
+          tableId: table.id,
+        },
+      });
       const newRows: { columnId: string; column: Column; rows: Rows }[] = [];
       for (const row of input.data) {
+        columns = columns.filter((c) => c.id !== row.columnId);
         newRows.push({
           rows: await prisma.rows.create({
             data: {
@@ -140,6 +149,20 @@ export const dataRouter = createTRPCRouter({
               id: row.columnId,
             },
           })) as Column,
+        });
+      }
+      for (const column of columns) {
+        if (column.type != "many" && column.type != "one") continue;
+        newRows.push({
+          rows: await prisma.rows.create({
+            data: {
+              rowId: rowId,
+              data: `[${column.name}](https://portfolio-msteenwijk-livenl.vercel.app/portfolio/${ctx.session.user.id}/${column.tableId}/)`,
+              columnId: column.id,
+            },
+          }),
+          columnId: column.id,
+          column: column,
         });
       }
       return newRows;
