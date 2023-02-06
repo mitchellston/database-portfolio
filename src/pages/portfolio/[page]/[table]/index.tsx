@@ -1,10 +1,10 @@
-import { Column, Rows } from "@prisma/client";
+import type { Column, Rows } from "@prisma/client";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import type { NextPage } from "next/types";
 import Loading from "../../../../components/utils/loading";
 import { api } from "../../../../utils/api";
-
+import Link from "next/link";
 const Fetch: NextPage = () => {
   // get id from url
   const router = useRouter();
@@ -30,7 +30,12 @@ const Fetch: NextPage = () => {
       </Head>
       <main className="min-screen h-screen bg-black">
         <div>
-          <button className="text-white">← Back</button>
+          <Link
+            href={`/portfolio/${router.query.page as string}/`}
+            className="text-white"
+          >
+            ← Back
+          </Link>
         </div>
         {User.isLoading ? <Loading /> : null}
         {User.isError ? (

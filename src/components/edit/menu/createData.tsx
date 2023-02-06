@@ -14,27 +14,17 @@ const EditData: NextPage<props> = (props) => {
   const [newData, setNewData] = useState<{ columnId: string; data: string }[]>(
     []
   );
-  const [rows, setRows] = useState<
-    { columnId: string; column: Column; rows: Rows[] }[]
-  >([]);
+
   const getData = api.portfolio.data.getRows.useQuery({
     columnID: null,
     tableID: props.tableID,
   });
-  if (getData.isSuccess && getData.data != undefined && rows.length == 0)
-    setRows(getData.data);
+
   const createRow = api.portfolio.data.createRow.useMutation({
-    onSuccess: (data) => {
-      // set new ros in right column
-      const copyRows = rows;
-      data.map((row) => {
-        rows.map((rows) => {
-          if (rows.columnId == row.columnId) {
-            rows.rows.push(row.rows);
-          }
-        });
+    onSuccess: () => {
+      getData.refetch().catch(() => {
+        return;
       });
-      setRows(copyRows);
     },
   });
   const setInData = (index: number, columnId: string, data: string) => {
@@ -64,7 +54,10 @@ const EditData: NextPage<props> = (props) => {
       </button>
       <Modal
         title={{ text: "Edit data", color: "black", size: 1.5 }}
-        onClose={() => setCreateNewDataMenu(false)}
+        onClose={() => {
+          setCreateNewDataMenu(false);
+        }}
+        className="dark:bg-slate-800"
         show={createNewDataMenu}
       >
         <>
@@ -77,11 +70,15 @@ const EditData: NextPage<props> = (props) => {
               <table>
                 <thead>
                   <tr>
-                    <th>Nieuwe row</th>
+                    <th className="text-black dark:text-white">Nieuwe row</th>
                     {props.columns.map((column, index) => {
                       if (column.type == "many" || column.type == "one")
                         return <></>;
-                      return <th key={index}>{column.name}</th>;
+                      return (
+                        <th className="text-black dark:text-white" key={index}>
+                          {column.name}
+                        </th>
+                      );
                     })}
                   </tr>
                 </thead>
@@ -158,19 +155,32 @@ const EditData: NextPage<props> = (props) => {
                   </tr>
                 </tbody>
               </table>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Row</th>
-                    {props.columns.map((column, index) => {
-                      return <th key={index}>{column.name}</th>;
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  <MakeRows row={rows} />
-                </tbody>
-              </table>
+              {getData.data && getData.data != undefined && (
+                <>
+                  <button
+                    onClick={() => {
+                      getData.refetch().catch(() => {
+                        return;
+                      });
+                    }}
+                  >
+                    Refresh rows
+                  </button>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Rows</th>
+                        {props.columns.map((column, index) => {
+                          return <th key={index}>{column.name}</th>;
+                        })}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <MakeRows row={getData.data} />
+                    </tbody>
+                  </table>
+                </>
+              )}
             </div>
           </div>
         </>
@@ -207,7 +217,7 @@ const MakeRows: NextPage<Row> = (props) => {
             <td>{index}</td>
             {row.data.map((data, index) => {
               return (
-                <td className="text-black" key={index}>
+                <td className="text-black dark:text-white" key={index}>
                   {data}
                 </td>
               );

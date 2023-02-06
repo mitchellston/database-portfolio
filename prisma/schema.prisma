@@ -109,7 +109,7 @@ model Rows {
     column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade) //, onDelete: Cascade)
     columnId String
     rowId    String
-    data     String
+    data     String @db.Text // text 
 
     @@index([columnId])
 }

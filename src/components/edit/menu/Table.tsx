@@ -26,7 +26,7 @@ const Table: NextPage<TableProps> = (props) => {
   return tableInfo == undefined ? null : (
     <div
       key={props.table.id}
-      className="mb-2 flex flex-col space-y-4 rounded-lg bg-white p-4 shadow-xl dark:bg-slate-800"
+      className="mb-2 flex flex-col space-y-4 rounded-lg bg-white p-4 shadow-2xl dark:bg-slate-800"
     >
       <p
         onClick={() => {

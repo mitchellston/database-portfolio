@@ -83,7 +83,7 @@ const Editor: NextPage<propsEditor> = (props) => {
     <main className="h-screen w-screen">
       <div className="fixed h-screen  w-screen bg-gradient-to-t from-slate-600 to-slate-300 dark:to-slate-800"></div>
       <div className="flex h-full w-full flex-row">
-        <div className="z-10 flex h-full max-h-full w-full max-w-md flex-col space-y-4 rounded-lg bg-white p-4 shadow-lg dark:bg-slate-800">
+        <div className="z-10 flex h-full max-h-full w-full max-w-md flex-col space-y-4 rounded-lg bg-white p-4 shadow-lg dark:bg-slate-900">
           <h1 className="text-center text-2xl font-bold text-slate-900 dark:text-white">
             Edit your portfolio
           </h1>
