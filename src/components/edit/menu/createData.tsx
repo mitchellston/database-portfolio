@@ -28,11 +28,13 @@ const EditData: NextPage<props> = (props) => {
     },
   });
   const setInData = (index: number, columnId: string, data: string) => {
-    if (newData[index] === undefined) {
+    const newIndex = index - 1;
+
+    if (newData[newIndex] == undefined) {
       setNewData([...newData, { columnId: columnId, data: data }]);
     } else {
       const newDataCopy = newData;
-      newDataCopy[index] = { columnId: columnId, data: data };
+      newDataCopy[newIndex] = { columnId: columnId, data: data };
       setNewData(newDataCopy);
     }
   };
@@ -141,11 +143,11 @@ const EditData: NextPage<props> = (props) => {
                     <td>
                       <button
                         onClick={() => {
-                          console.log(newData);
                           createRow.mutate({
                             tableId: props.tableID,
                             data: newData,
                           });
+
                           return;
                         }}
                       >
@@ -199,17 +201,17 @@ const MakeRows: NextPage<Row> = (props) => {
   >(props.row);
   const deleteRow = api.portfolio.data.deleteRow.useMutation({
     onSuccess: (data) => {
-      console.log(data);
       const newData: { columnId: string; column: Column; rows: Rows[] }[] = [];
       for (const column of rowData) {
         if (column.columnId != data) {
           newData.push(column);
         }
       }
+
       setRowData(newData);
     },
   });
-  const ammountOfColumns: number | undefined = props.row.length;
+  const ammountOfColumns: number | undefined = rowData.length;
   const rows: { rowId: string; data: string[] }[] = [];
   for (let i = 0; i < ammountOfColumns; i++) {
     const row = rowData[i]?.rows;

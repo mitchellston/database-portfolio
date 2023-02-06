@@ -94,6 +94,7 @@ export const dataRouter = createTRPCRouter({
           },
         },
       });
+      const howManyColumns = columns.length;
 
       for (const column of input.data) {
         if (!columns.find((c) => c.id === column.columnId)) {
@@ -103,11 +104,13 @@ export const dataRouter = createTRPCRouter({
           });
         }
       }
-      if (columns.length !== input.data.length)
+
+      if (howManyColumns != input.data.length) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: `Not all columns are filled expected ${columns.length} got ${input.data.length} `,
+          message: `Not all columns are filled expected ${howManyColumns} got ${input.data.length} `,
         });
+      }
       //generate row id
       let rowId = "";
       while (rowId == "") {
@@ -127,11 +130,7 @@ export const dataRouter = createTRPCRouter({
             rowId = id;
           });
       }
-      columns = await prisma.column.findMany({
-        where: {
-          tableId: table.id,
-        },
-      });
+
       const newRows: { columnId: string; column: Column; rows: Rows }[] = [];
       for (const row of input.data) {
         columns = columns.filter((c) => c.id !== row.columnId);
@@ -151,7 +150,12 @@ export const dataRouter = createTRPCRouter({
           })) as Column,
         });
       }
-      for (const column of columns) {
+      const columnsRelations = await prisma.column.findMany({
+        where: {
+          tableId: table.id,
+        },
+      });
+      for (const column of columnsRelations) {
         if (column.type != "many" && column.type != "one") continue;
         newRows.push({
           rows: await prisma.rows.create({
