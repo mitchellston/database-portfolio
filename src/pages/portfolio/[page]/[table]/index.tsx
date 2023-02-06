@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import type { NextPage } from "next/types";
 import Loading from "../../../../components/utils/loading";
 import { api } from "../../../../utils/api";
-import Link from "next/link";
 import Markdown from "react-markdown";
 const Fetch: NextPage = () => {
   // get id from url
@@ -31,12 +30,14 @@ const Fetch: NextPage = () => {
       </Head>
       <main className="min-screen h-screen bg-black">
         <div>
-          <Link
-            href={`/portfolio/${router.query.page as string}/`}
+          <button
+            onClick={() => {
+              router.back();
+            }}
             className="text-white"
           >
             ← Back
-          </Link>
+          </button>
         </div>
         {User.isLoading ? <Loading /> : null}
         {User.isError ? (
@@ -65,12 +66,12 @@ const TableData: NextPage<props> = (props) => {
           <p className="text-center text-red-700">error</p>
         ) : null}
         {getData.isSuccess && getData.data != null && (
-          <table>
+          <table className="border-collapse border">
             <thead>
-              <tr>
+              <tr className="border-white">
                 {getData.data.map((column, index) => {
                   return (
-                    <th key={index} className="text-white">
+                    <th key={index} className="border-white text-white">
                       [{column.column.type}]{column.column.name}
                     </th>
                   );
@@ -110,10 +111,10 @@ const MakeRows: NextPage<Row> = (props) => {
     <>
       {rows.map((row, index) => {
         return (
-          <tr key={index}>
+          <tr className="border-white" key={index}>
             {row.data.map((data, index) => {
               return (
-                <td className="text-white" key={index}>
+                <td className="border-white text-center text-white" key={index}>
                   <Markdown>{data}</Markdown>
                 </td>
               );

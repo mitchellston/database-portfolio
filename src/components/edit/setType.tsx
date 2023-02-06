@@ -18,7 +18,7 @@ const SetType: NextPage<propsType> = (props) => {
       nameTable.data != undefined
     ) {
       const data = nameTable.data[0];
-      return <>{props.type == "many" ? data.name + "[]" : data.name}</>;
+      return <>{props.type == "many" ? data.name + "[ ]" : data.name}</>;
     }
   }
   return <>{props.type}</>;

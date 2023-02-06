@@ -4,7 +4,7 @@ import { useState } from "react";
 import { api } from "../../../utils/api";
 import Loading from "../../utils/loading";
 import Modal from "../../utils/modal";
-
+import Markdown from "react-markdown";
 type props = {
   tableID: string;
   columns: Column[];
@@ -234,7 +234,7 @@ const MakeRows: NextPage<Row> = (props) => {
             {row.data.map((data, index) => {
               return (
                 <td className="text-black dark:text-white" key={index}>
-                  {data}
+                  <Markdown>{data}</Markdown>
                 </td>
               );
             })}
