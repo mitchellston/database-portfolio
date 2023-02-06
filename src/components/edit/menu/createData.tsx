@@ -38,7 +38,10 @@ const EditData: NextPage<props> = (props) => {
       setNewData(newDataCopy);
     }
   };
-
+  //remove many and one columns from columns
+  const columns = props.columns.filter((column) => {
+    column.type != "many" && column.type != "one";
+  });
   return (
     <>
       <button
@@ -73,7 +76,7 @@ const EditData: NextPage<props> = (props) => {
                 <thead>
                   <tr>
                     <th className="text-black dark:text-white">Nieuwe row</th>
-                    {props.columns.map((column, index) => {
+                    {columns.map((column, index) => {
                       if (column.type == "many" || column.type == "one")
                         return <></>;
                       return (
@@ -87,7 +90,7 @@ const EditData: NextPage<props> = (props) => {
                 <tbody>
                   <tr>
                     <td></td>
-                    {props.columns.map((column, index) => {
+                    {columns.map((column, index) => {
                       return (
                         <td key={index}>
                           {column.type === "string" && (
