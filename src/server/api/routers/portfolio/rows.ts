@@ -157,7 +157,11 @@ export const dataRouter = createTRPCRouter({
           rows: await prisma.rows.create({
             data: {
               rowId: rowId,
-              data: `[${column.name}](https://portfolio-msteenwijk-livenl.vercel.app/portfolio/${ctx.session.user.id}/${column.tableId}/)`,
+              data: `[${
+                column.name
+              }](https://portfolio-msteenwijk-livenl.vercel.app/portfolio/${
+                ctx.session.user.id
+              }/${column.relationShipTableId as string}/)`,
               columnId: column.id,
             },
           }),
