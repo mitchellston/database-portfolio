@@ -93,7 +93,7 @@ export const CreateColumn: NextPage<props> = (props) => {
               <option value="date">date</option>
               <option value="relation">relation</option>
               <option value="markdown">markdown</option>
-              <option value="image">image</option>
+              {/* <option value="image">image</option> */}
             </select>
             {columnType === "relation" && (
               <RelationShip

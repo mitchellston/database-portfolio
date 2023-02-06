@@ -39,9 +39,13 @@ const EditData: NextPage<props> = (props) => {
     }
   };
   //remove many and one columns from columns
-  const columns = props.columns.filter((column) => {
-    column.type == "many" || column.type == "one";
+  const columns: Column[] = [];
+  props.columns.forEach((column) => {
+    if (column.type != "many" && column.type != "one") {
+      columns.push(column);
+    }
   });
+
   return (
     <>
       <button
@@ -98,7 +102,7 @@ const EditData: NextPage<props> = (props) => {
                               onChange={(e) => {
                                 setInData(index, column.id, e.target.value);
                               }}
-                              className="border border-stone-700"
+                              className="border border-stone-700 text-black"
                               type="text"
                             />
                           )}
@@ -107,12 +111,13 @@ const EditData: NextPage<props> = (props) => {
                               onChange={(e) => {
                                 setInData(index, column.id, e.target.value);
                               }}
-                              className="border border-stone-700"
+                              className="border border-stone-700 text-black"
                               type="number"
                             />
                           )}
                           {column.type === "boolean" && (
                             <select
+                              className="text-black"
                               onChange={(e) => {
                                 setInData(index, column.id, e.target.value);
                               }}
@@ -126,7 +131,7 @@ const EditData: NextPage<props> = (props) => {
                               onChange={(e) => {
                                 setInData(index, column.id, e.target.value);
                               }}
-                              className="border border-stone-700"
+                              className="border border-stone-700 text-black"
                               type="date"
                             />
                           )}
@@ -135,7 +140,7 @@ const EditData: NextPage<props> = (props) => {
                               onChange={(e) => {
                                 setInData(index, column.id, e.target.value);
                               }}
-                              className="border border-stone-700"
+                              className="border border-stone-700 text-black"
                               // only height is allowed to be changed
                               style={{ resize: "vertical" }}
                             />
