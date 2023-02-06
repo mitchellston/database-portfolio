@@ -1,6 +1,6 @@
 import type { Column } from "@prisma/client";
 import type { NextPage } from "next/types";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { api } from "../../../../utils/api";
 import Modal from "../../../utils/modal";
 import RelationShip from "./relationship";
