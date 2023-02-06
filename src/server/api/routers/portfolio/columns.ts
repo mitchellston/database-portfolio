@@ -86,7 +86,7 @@ export const columnsRouter = createTRPCRouter({
             name: input.name,
             type: input.relationShip?.type,
             tableId: input.tableId,
-            relationTo: input.relationShip?.table,
+            relationShipTableId: input.relationShip.table,
             order:
               (await prisma.column.count({
                 where: { tableId: input.tableId },

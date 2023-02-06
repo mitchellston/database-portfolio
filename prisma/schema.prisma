@@ -71,31 +71,32 @@ model VerificationToken {
 }
 
 model Tables {
-    id            String   @id @default(cuid())
-    User          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId        String
-    name          String
-    top           Float
-    left          Float
-    columns       Column[] @relation("parent")
-    relationShips Column[] @relation("relationship")
+    id       String   @id @default(cuid())
+    User     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId   String
+    name     String
+    top      Float
+    left     Float
+    columns  Column[] @relation("parent")
+    relation Column[] @relation("relation")
 
     @@index([userId])
 }
 
 model Column {
-    id            String  @id @default(cuid())
-    table         Tables  @relation("parent", fields: [tableId], references: [id], onDelete: Cascade) //, onDelete: Cascade) 
-    tableId       String
-    type          String
-    name          String
-    order         Int
-    rows          Rows[]
-    relationShips Tables? @relation("relationship", fields: [relationTo], references: [id])
-    relationTo    String?
+    id                  String  @id @default(cuid())
+    table               Tables  @relation("parent", fields: [tableId], references: [id], onDelete: Cascade) //, onDelete: Cascade) 
+    tableId             String
+    type                String
+    name                String
+    order               Int
+    rows                Rows[]
+    relationShipRows    Rows[]  @relation("relation")
+    relationShipTable   Tables? @relation("relation", fields: [relationShipTableId], references: [id], onDelete: Cascade) //, onDelete: Cascade
+    relationShipTableId String?
 
     @@index([tableId])
-    @@index([relationTo])
+    @@index([relationShipTableId])
 }
 
 // enum types {
@@ -105,11 +106,14 @@ model Column {
 //     Date
 // }
 model Rows {
-    id       String @id @default(cuid())
-    column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade) //, onDelete: Cascade)
-    columnId String
-    rowId    String
-    data     String @db.Text // text 
+    id         String @id @default(cuid())
+    column     Column @relation(fields: [columnId], references: [id], onDelete: Cascade) //, onDelete: Cascade)
+    columnId   String
+    rowId      String
+    data       String @db.Text // text 
+    relation   Column @relation("relation", fields: [relationId], references: [id], onDelete: Cascade) //, onDelete: Cascade
+    relationId String
 
     @@index([columnId])
+    @@index([relationId])
 }
