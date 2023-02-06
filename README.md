@@ -6,7 +6,7 @@ A web application to create database portfolios
 
 ## Getting Started
 
-1. Create a .env file.
+1. Create a .env file
 ```
 # Since .env is gitignored, you can use .env.example to build a new `.env` file when you clone the repo.
 # Keep this file up-to-date when you add new variables to `.env`.
