@@ -10,7 +10,7 @@ import Link from "next/link";
 
 import Viewer from "../../components/edit/viewer";
 import type { Tables } from "@prisma/client";
-import { useState } from "react";
+
 const Auth: NextPage = () => {
   const { data: session, status } = useSession();
   const router = useRouter();

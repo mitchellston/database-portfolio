@@ -5,6 +5,7 @@ import type { NextPage } from "next/types";
 import Loading from "../../../../components/utils/loading";
 import { api } from "../../../../utils/api";
 import Link from "next/link";
+import Markdown from "react-markdown";
 const Fetch: NextPage = () => {
   // get id from url
   const router = useRouter();
@@ -113,7 +114,7 @@ const MakeRows: NextPage<Row> = (props) => {
             {row.data.map((data, index) => {
               return (
                 <td className="text-white" key={index}>
-                  {data}
+                  <Markdown>{data}</Markdown>
                 </td>
               );
             })}
