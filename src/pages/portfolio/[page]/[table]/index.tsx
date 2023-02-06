@@ -68,10 +68,10 @@ const TableData: NextPage<props> = (props) => {
         {getData.isSuccess && getData.data != null && (
           <table className="border-collapse border">
             <thead>
-              <tr className="border-white">
+              <tr className="">
                 {getData.data.map((column, index) => {
                   return (
-                    <th key={index} className="border-white text-white">
+                    <th key={index} className="border border-white text-white">
                       [{column.column.type}]{column.column.name}
                     </th>
                   );
@@ -111,10 +111,13 @@ const MakeRows: NextPage<Row> = (props) => {
     <>
       {rows.map((row, index) => {
         return (
-          <tr className="border-white" key={index}>
+          <tr className="" key={index}>
             {row.data.map((data, index) => {
               return (
-                <td className="border-white text-center text-white" key={index}>
+                <td
+                  className="border  border-white text-center text-white"
+                  key={index}
+                >
                   <Markdown>{data}</Markdown>
                 </td>
               );
