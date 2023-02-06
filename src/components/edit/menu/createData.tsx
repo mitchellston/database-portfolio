@@ -176,7 +176,7 @@ const EditData: NextPage<props> = (props) => {
                       </tr>
                     </thead>
                     <tbody>
-                      <MakeRows row={getData.data} />
+                      <MakeRows row={getData.data} tableId={props.tableID} />
                     </tbody>
                   </table>
                 </>
@@ -191,8 +191,10 @@ const EditData: NextPage<props> = (props) => {
 export default EditData;
 type Row = {
   row: { columnId: string; column: Column; rows: Rows[] }[];
+  tableId: string;
 };
 const MakeRows: NextPage<Row> = (props) => {
+  const deleteRow = api.portfolio.data.deleteRow.useMutation();
   const ammountOfColumns: number | undefined = props.row.length;
   const rows: { rowId: string; data: string[] }[] = [];
   for (let i = 0; i < ammountOfColumns; i++) {
@@ -222,6 +224,18 @@ const MakeRows: NextPage<Row> = (props) => {
                 </td>
               );
             })}
+            <td>
+              <button
+                onClick={() => {
+                  deleteRow.mutate({
+                    tableId: props.tableId,
+                    rowId: row.rowId,
+                  });
+                }}
+              >
+                Delete
+              </button>
+            </td>
           </tr>
         );
       })}
