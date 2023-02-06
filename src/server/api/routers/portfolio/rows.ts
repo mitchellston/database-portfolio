@@ -193,7 +193,7 @@ export const dataRouter = createTRPCRouter({
         });
       }
       // delete row
-      return await prisma.rows.deleteMany({
+      await prisma.rows.deleteMany({
         where: {
           rowId: input.rowId,
           columnId: {
@@ -201,5 +201,6 @@ export const dataRouter = createTRPCRouter({
           },
         },
       });
+      return input.rowId;
     }),
 });

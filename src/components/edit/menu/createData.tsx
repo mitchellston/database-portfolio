@@ -194,11 +194,25 @@ type Row = {
   tableId: string;
 };
 const MakeRows: NextPage<Row> = (props) => {
-  const deleteRow = api.portfolio.data.deleteRow.useMutation();
+  const [rowData, setRowData] = useState<
+    { columnId: string; column: Column; rows: Rows[] }[]
+  >(props.row);
+  const deleteRow = api.portfolio.data.deleteRow.useMutation({
+    onSuccess: (data) => {
+      console.log(data);
+      const newData: { columnId: string; column: Column; rows: Rows[] }[] = [];
+      for (const column of rowData) {
+        if (column.columnId != data) {
+          newData.push(column);
+        }
+      }
+      setRowData(newData);
+    },
+  });
   const ammountOfColumns: number | undefined = props.row.length;
   const rows: { rowId: string; data: string[] }[] = [];
   for (let i = 0; i < ammountOfColumns; i++) {
-    const row = props.row[i]?.rows;
+    const row = rowData[i]?.rows;
     row?.map((row) => {
       // check if row is already in array if not push it
       if (!rows.find((rowl) => row.rowId === rowl.rowId)) {
