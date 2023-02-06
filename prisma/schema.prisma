@@ -106,13 +106,13 @@ model Column {
 //     Date
 // }
 model Rows {
-    id         String @id @default(cuid())
-    column     Column @relation(fields: [columnId], references: [id], onDelete: Cascade) //, onDelete: Cascade)
+    id         String  @id @default(cuid())
+    column     Column  @relation(fields: [columnId], references: [id], onDelete: Cascade) //, onDelete: Cascade)
     columnId   String
     rowId      String
-    data       String @db.Text // text 
-    relation   Column @relation("relation", fields: [relationId], references: [id], onDelete: Cascade) //, onDelete: Cascade
-    relationId String
+    data       String  @db.Text // text 
+    relation   Column? @relation("relation", fields: [relationId], references: [id], onDelete: Cascade) //, onDelete: Cascade
+    relationId String?
 
     @@index([columnId])
     @@index([relationId])
