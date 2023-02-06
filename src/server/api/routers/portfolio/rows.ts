@@ -7,7 +7,7 @@ import {
 import { prisma } from "../../../db";
 import { TRPCError } from "@trpc/server";
 import type { Column, Rows } from "@prisma/client";
-import Colunn from "../../../../components/edit/menu/column";
+
 export const dataRouter = createTRPCRouter({
   getRows: publicProcedure
     .input(

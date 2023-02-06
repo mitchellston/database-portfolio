@@ -57,7 +57,7 @@ const EditData: NextPage<props> = (props) => {
         onClose={() => {
           setCreateNewDataMenu(false);
         }}
-        className="dark:bg-slate-800"
+        className="dark:bg-slate-800 lg:h-2/3"
         show={createNewDataMenu}
       >
         <>
@@ -65,7 +65,7 @@ const EditData: NextPage<props> = (props) => {
           {getData.isError && (
             <div className="text-center text-red-700">error</div>
           )}
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-4 p-4">
             <div className="max-w-full overflow-auto">
               <table>
                 <thead>

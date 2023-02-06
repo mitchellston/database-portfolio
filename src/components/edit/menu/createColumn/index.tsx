@@ -57,8 +57,8 @@ export const CreateColumn: NextPage<props> = (props) => {
         show={createTableModal}
         title={{ text: "Maak een colom", color: "black", size: 1.5 }}
       >
-        <div className="flex flex-col space-y-4">
-          <div className="flex flex-col ">
+        <div className="flex flex-col space-y-4 p-5">
+          <div className=" flex flex-col ">
             <label htmlFor="name">Colom naam:</label>
             <input
               onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,7 +127,7 @@ export const CreateColumn: NextPage<props> = (props) => {
                   return;
                 });
             }}
-            className=" w-full bg-blue-700 text-white hover:bg-blue-700/50"
+            className=" w-full bg-blue-700  text-white hover:bg-blue-700/50"
           >
             Create - {columnName}
           </button>
