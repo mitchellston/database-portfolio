@@ -6,7 +6,8 @@ import {
 } from "../../trpc";
 import { prisma } from "../../../db";
 import { TRPCError } from "@trpc/server";
-import type { Rows } from "@prisma/client";
+import type { Column, Rows } from "@prisma/client";
+import Colunn from "../../../../components/edit/menu/column";
 export const dataRouter = createTRPCRouter({
   getRows: publicProcedure
     .input(
@@ -43,19 +44,18 @@ export const dataRouter = createTRPCRouter({
         const columns = await prisma.column.findMany({
           where: where,
         });
-        console.log(columns);
         // return a object with the columns id and a array of rows data
-        const rows: { columnId: string; rows: Rows[] }[] = [];
+        const rows: { columnId: string; column: Column; rows: Rows[] }[] = [];
         for (const column of columns) {
           await prisma.rows
             .findMany({
               where: { columnId: column.id },
             })
             .then((data) => {
-              rows.push({ columnId: column.id, rows: data });
+              rows.push({ columnId: column.id, column: column, rows: data });
             })
-            .catch((err) => {
-              console.log(err);
+            .catch(() => {
+              return;
             });
         }
         return rows;
@@ -124,10 +124,10 @@ export const dataRouter = createTRPCRouter({
             rowId = id;
           });
       }
-      const newRows: { columnId: string; row: Rows }[] = [];
+      const newRows: { columnId: string; column: Column; rows: Rows }[] = [];
       for (const row of input.data) {
         newRows.push({
-          row: await prisma.rows.create({
+          rows: await prisma.rows.create({
             data: {
               rowId: rowId,
               data: row.data,
@@ -135,6 +135,11 @@ export const dataRouter = createTRPCRouter({
             },
           }),
           columnId: row.columnId,
+          column: (await prisma.column.findFirst({
+            where: {
+              id: row.columnId,
+            },
+          })) as Column,
         });
       }
       return newRows;

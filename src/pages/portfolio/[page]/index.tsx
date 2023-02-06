@@ -1,9 +1,9 @@
 import { type NextPage } from "next/types";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { api } from "../../utils/api";
-import Loading from "../../components/utils/loading";
-import Table from "../../components/portfolio/table";
+import { api } from "../../../utils/api";
+import Loading from "../../../components/utils/loading";
+import Table from "../../../components/portfolio/table";
 
 const Page: NextPage = () => {
   // get id from url

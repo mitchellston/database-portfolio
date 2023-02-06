@@ -1,4 +1,5 @@
 import type { Tables } from "@prisma/client";
+import Link from "next/link";
 import type { NextPage } from "next/types";
 import { api } from "../../../utils/api";
 import SetType from "../../edit/setType";
@@ -15,7 +16,8 @@ const Table: NextPage<props> = (props) => {
   if (columns.isLoading) return null;
   if (columns.isError) return null;
   return (
-    <div
+    <Link
+      href={`/portfolio/${props.userId}/${props.table.id}`}
       style={{
         transform: `translate(${props.table.top}px, ${props.table.left}px)`,
       }}
@@ -51,7 +53,7 @@ const Table: NextPage<props> = (props) => {
           })}
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 export default Table;

@@ -1,4 +1,4 @@
-import type { Column } from "@prisma/client";
+import type { Column, Rows } from "@prisma/client";
 import type { NextPage } from "next/types";
 import { useState } from "react";
 import { api } from "../../../utils/api";
@@ -14,11 +14,29 @@ const EditData: NextPage<props> = (props) => {
   const [newData, setNewData] = useState<{ columnId: string; data: string }[]>(
     []
   );
+  const [rows, setRows] = useState<
+    { columnId: string; column: Column; rows: Rows[] }[]
+  >([]);
   const getData = api.portfolio.data.getRows.useQuery({
     columnID: null,
     tableID: props.tableID,
   });
-  const createRow = api.portfolio.data.createRow.useMutation();
+  if (getData.isSuccess && getData.data != undefined && rows.length == 0)
+    setRows(getData.data);
+  const createRow = api.portfolio.data.createRow.useMutation({
+    onSuccess: (data) => {
+      // set new ros in right column
+      const copyRows = rows;
+      data.map((row) => {
+        rows.map((rows) => {
+          if (rows.columnId == row.columnId) {
+            rows.rows.push(row.rows);
+          }
+        });
+      });
+      setRows(copyRows);
+    },
+  });
   const setInData = (index: number, columnId: string, data: string) => {
     if (newData[index] === undefined) {
       setNewData([...newData, { columnId: columnId, data: data }]);
@@ -149,6 +167,9 @@ const EditData: NextPage<props> = (props) => {
                     })}
                   </tr>
                 </thead>
+                <tbody>
+                  <MakeRows row={rows} />
+                </tbody>
               </table>
             </div>
           </div>
@@ -158,3 +179,42 @@ const EditData: NextPage<props> = (props) => {
   );
 };
 export default EditData;
+type Row = {
+  row: { columnId: string; column: Column; rows: Rows[] }[];
+};
+const MakeRows: NextPage<Row> = (props) => {
+  const ammountOfColumns: number | undefined = props.row.length;
+  const rows: { rowId: string; data: string[] }[] = [];
+  for (let i = 0; i < ammountOfColumns; i++) {
+    const row = props.row[i]?.rows;
+    row?.map((row) => {
+      // check if row is already in array if not push it
+      if (!rows.find((rowl) => row.rowId === rowl.rowId)) {
+        rows.push({ rowId: row.rowId, data: [row.data] });
+      }
+      // if row is already in array add data to data array
+      else {
+        rows.find((rowl) => row.rowId === rowl.rowId)?.data.push(row.data);
+      }
+    });
+  }
+
+  return (
+    <>
+      {rows.map((row, index) => {
+        return (
+          <tr key={index}>
+            <td>{index}</td>
+            {row.data.map((data, index) => {
+              return (
+                <td className="text-black" key={index}>
+                  {data}
+                </td>
+              );
+            })}
+          </tr>
+        );
+      })}
+    </>
+  );
+};
