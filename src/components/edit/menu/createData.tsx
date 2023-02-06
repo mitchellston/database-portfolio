@@ -29,7 +29,7 @@ const EditData: NextPage<props> = (props) => {
   });
   const setInData = (index: number, columnId: string, data: string) => {
     const newIndex = index - 1;
-
+    console.error("fewfew", newIndex);
     if (newData[newIndex] == undefined) {
       setNewData([...newData, { columnId: columnId, data: data }]);
     } else {
