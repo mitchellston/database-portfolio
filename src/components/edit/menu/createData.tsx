@@ -10,10 +10,14 @@ type props = {
   columns: Column[];
 };
 const EditData: NextPage<props> = (props) => {
+  // used to enable menu
   const [createNewDataMenu, setCreateNewDataMenu] = useState(false);
+  // used to store new data that will be send to the api
   const [newData, setNewData] = useState<{ columnId: string; data: string }[]>(
     []
   );
+  // used to store error
+  const [error, setError] = useState<string | null>(null);
 
   const getData = api.portfolio.data.getRows.useQuery({
     columnID: null,
@@ -21,15 +25,19 @@ const EditData: NextPage<props> = (props) => {
   });
 
   const createRow = api.portfolio.data.createRow.useMutation({
-    onSuccess: () => {
-      getData.refetch().catch(() => {
-        return;
-      });
+    onSuccess: (data) => {
+      if (data) {
+        getData.refetch().catch(() => {
+          return;
+        });
+      }
+    },
+    onError: (error) => {
+      setError(error.message);
     },
   });
   const setInData = (index: number, columnId: string, data: string) => {
     const newIndex = index;
-    console.error("fewfew", newIndex);
     if (newData[newIndex] == undefined) {
       setNewData([...newData, { columnId: columnId, data: data }]);
     } else {
@@ -65,6 +73,7 @@ const EditData: NextPage<props> = (props) => {
         title={{ text: "Edit data", color: "black", size: 1.5 }}
         onClose={() => {
           setCreateNewDataMenu(false);
+          setError(null);
         }}
         className="dark:bg-slate-800 lg:h-2/3"
         show={createNewDataMenu}
@@ -156,7 +165,9 @@ const EditData: NextPage<props> = (props) => {
                             tableId: props.tableID,
                             data: newData,
                           });
-
+                          getData.refetch().catch(() => {
+                            return;
+                          });
                           return;
                         }}
                       >
@@ -166,17 +177,9 @@ const EditData: NextPage<props> = (props) => {
                   </tr>
                 </tbody>
               </table>
+              <p className="text-center text-red-700">{error}</p>
               {getData.data && getData.data != undefined && (
                 <>
-                  <button
-                    onClick={() => {
-                      getData.refetch().catch(() => {
-                        return;
-                      });
-                    }}
-                  >
-                    Refresh rows
-                  </button>
                   <table>
                     <thead>
                       <tr>
@@ -187,7 +190,18 @@ const EditData: NextPage<props> = (props) => {
                       </tr>
                     </thead>
                     <tbody>
-                      <MakeRows row={getData.data} tableId={props.tableID} />
+                      <MakeRows
+                        refetch={() => {
+                          getData.refetch().catch(() => {
+                            return;
+                          });
+                        }}
+                        onError={(error) => {
+                          setError(error);
+                        }}
+                        row={getData.data}
+                        tableId={props.tableID}
+                      />
                     </tbody>
                   </table>
                 </>
@@ -203,6 +217,8 @@ export default EditData;
 type Row = {
   row: { columnId: string; column: Column; rows: Rows[] }[];
   tableId: string;
+  refetch?: () => void;
+  onError?: (error: string) => void;
 };
 const MakeRows: NextPage<Row> = (props) => {
   const [rowData, setRowData] = useState<
@@ -216,8 +232,11 @@ const MakeRows: NextPage<Row> = (props) => {
           newData.push(column);
         }
       }
-
       setRowData(newData);
+      if (props.refetch) props.refetch();
+    },
+    onError: (error) => {
+      if (props.onError) props.onError(error.message);
     },
   });
   const ammountOfColumns: number | undefined = rowData.length;
@@ -235,7 +254,6 @@ const MakeRows: NextPage<Row> = (props) => {
       }
     });
   }
-
   return (
     <>
       {rows.map((row, index) => {

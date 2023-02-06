@@ -131,23 +131,14 @@ export const dataRouter = createTRPCRouter({
           });
       }
 
-      const newRows: { columnId: string; column: Column; rows: Rows }[] = [];
       for (const row of input.data) {
         columns = columns.filter((c) => c.id !== row.columnId);
-        newRows.push({
-          rows: await prisma.rows.create({
-            data: {
-              rowId: rowId,
-              data: row.data,
-              columnId: row.columnId,
-            },
-          }),
-          columnId: row.columnId,
-          column: (await prisma.column.findFirst({
-            where: {
-              id: row.columnId,
-            },
-          })) as Column,
+        await prisma.rows.create({
+          data: {
+            rowId: rowId,
+            data: row.data,
+            columnId: row.columnId,
+          },
         });
       }
       const columnsRelations = await prisma.column.findMany({
@@ -157,23 +148,20 @@ export const dataRouter = createTRPCRouter({
       });
       for (const column of columnsRelations) {
         if (column.type != "many" && column.type != "one") continue;
-        newRows.push({
-          rows: await prisma.rows.create({
-            data: {
-              rowId: rowId,
-              data: `[${
-                column.name
-              }](https://portfolio-msteenwijk-livenl.vercel.app/portfolio/${
-                ctx.session.user.id
-              }/${column.relationShipTableId as string}/)`,
-              columnId: column.id,
-            },
-          }),
-          columnId: column.id,
-          column: column,
+
+        await prisma.rows.create({
+          data: {
+            rowId: rowId,
+            data: `[${
+              column.name
+            }](https://portfolio-msteenwijk-livenl.vercel.app/portfolio/${
+              ctx.session.user.id
+            }/${column.relationShipTableId as string}/)`,
+            columnId: column.id,
+          },
         });
       }
-      return newRows;
+      return true;
     }),
   deleteRow: protectedProcedure
     .input(
