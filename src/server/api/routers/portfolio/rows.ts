@@ -99,7 +99,7 @@ export const dataRouter = createTRPCRouter({
         if (!columns.find((c) => c.id === column.columnId)) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Column not found",
+            message: "Column not found expected: " + column.columnId,
           });
         }
       }
