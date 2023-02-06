@@ -28,7 +28,7 @@ const Fetch: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="min-screen h-screen bg-zinc-900">
+      <main className="min-screen max-w-screen h-screen max-h-screen overflow-auto bg-zinc-900">
         <div>
           <button
             onClick={() => {
@@ -54,7 +54,7 @@ const Fetch: NextPage = () => {
                   return table.name;
                 })}
             </h1>
-            <div className="flex h-full w-full justify-center">
+            <div className="flex w-full max-w-full  justify-center overflow-x-auto">
               <TableData tableID={router.query.table as string} />
             </div>
           </>
