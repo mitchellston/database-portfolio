@@ -99,14 +99,14 @@ export const dataRouter = createTRPCRouter({
         if (!columns.find((c) => c.id === column.columnId)) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Column not found expected: " + column.columnId,
+            message: "Column not found  ",
           });
         }
       }
       if (columns.length !== input.data.length)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Not all columns are filled",
+          message: `Not all columns are filled expected ${columns.length} got ${input.data.length} `,
         });
       //generate row id
       let rowId = "";
