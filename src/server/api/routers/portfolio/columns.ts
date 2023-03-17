@@ -14,7 +14,7 @@ export const columnsRouter = createTRPCRouter({
         where: {
           tableId: input.id,
         },
-        cacheStrategy: { swr: 60, ttl: 60 },
+        // cacheStrategy: { swr: 60, ttl: 60 },
       });
     }),
   createColumn: protectedProcedure
@@ -46,7 +46,7 @@ export const columnsRouter = createTRPCRouter({
             id: input.tableId,
             userId: ctx.session.user.id,
           },
-          cacheStrategy: { swr: 60, ttl: 60 },
+          // cacheStrategy: { swr: 60, ttl: 60 },
         })
         .catch(() => {
           throw new TRPCError({
@@ -124,7 +124,7 @@ export const columnsRouter = createTRPCRouter({
           include: {
             table: true,
           },
-          cacheStrategy: { swr: 60, ttl: 60 },
+          // cacheStrategy: { swr: 60, ttl: 60 },
         })
         .catch(() => {
           throw new TRPCError({
@@ -160,7 +160,7 @@ export const columnsRouter = createTRPCRouter({
           include: {
             table: true,
           },
-          cacheStrategy: { swr: 60, ttl: 60 },
+          // cacheStrategy: { swr: 60, ttl: 60 },
         })
         .catch(() => {
           throw new TRPCError({
