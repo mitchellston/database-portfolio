@@ -13,6 +13,7 @@ export const usersRouter = createTRPCRouter({
         .findFirstOrThrow({
           where: { id: input.id },
           select: { name: true, tables: true, displayName: true },
+          cacheStrategy: { swr: 60, ttl: 60 },
         })
         .catch(() => {
           throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });

@@ -25,6 +25,7 @@ export const dataRouter = createTRPCRouter({
             where: {
               id: input.tableID,
             },
+            cacheStrategy: { swr: 60, ttl: 60 },
           })
           .catch(() => {
             throw new TRPCError({
@@ -43,6 +44,7 @@ export const dataRouter = createTRPCRouter({
             : { id: input.columnID, tableId: tables.id };
         const columns = await prisma.column.findMany({
           where: where,
+          cacheStrategy: { swr: 60, ttl: 60 },
         });
         // return a object with the columns id and a array of rows data
         const rows: { columnId: string; column: Column; rows: Rows[] }[] = [];
@@ -50,6 +52,7 @@ export const dataRouter = createTRPCRouter({
           await prisma.rows
             .findMany({
               where: { columnId: column.id },
+              cacheStrategy: { swr: 60, ttl: 60 },
             })
             .then((data) => {
               rows.push({ columnId: column.id, column: column, rows: data });
@@ -77,6 +80,7 @@ export const dataRouter = createTRPCRouter({
             id: input.tableId,
             userId: ctx.session.user.id,
           },
+          cacheStrategy: { swr: 60, ttl: 60 },
         })
         .catch(() => {
           throw new TRPCError({
@@ -93,6 +97,7 @@ export const dataRouter = createTRPCRouter({
             },
           },
         },
+        cacheStrategy: { swr: 60, ttl: 60 },
       });
       const howManyColumns = columns.length;
 
@@ -125,6 +130,7 @@ export const dataRouter = createTRPCRouter({
                 tableId: table.id,
               },
             },
+            cacheStrategy: { swr: 60, ttl: 60 },
           })
           .catch(() => {
             rowId = id;
@@ -178,6 +184,7 @@ export const dataRouter = createTRPCRouter({
             id: input.tableId,
             userId: ctx.session.user.id,
           },
+          cacheStrategy: { swr: 60, ttl: 60 },
         })
         .catch(() => {
           throw new TRPCError({
@@ -190,6 +197,7 @@ export const dataRouter = createTRPCRouter({
         where: {
           tableId: table.id,
         },
+        cacheStrategy: { swr: 60, ttl: 60 },
       });
       // check if row exists
       const row = await prisma.rows.findMany({
@@ -199,6 +207,7 @@ export const dataRouter = createTRPCRouter({
             in: columns.map((c) => c.id),
           },
         },
+        cacheStrategy: { swr: 60, ttl: 60 },
       });
       if (row.length != columns.length) {
         throw new TRPCError({

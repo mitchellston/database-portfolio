@@ -26,6 +26,7 @@ export const tablesRouter = createTRPCRouter({
 
       const tables = await prisma.tables.findMany({
         where: where,
+        cacheStrategy: { swr: 60, ttl: 60 },
       });
       return tables;
     }),
@@ -40,7 +41,10 @@ export const tablesRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const count = await prisma.tables
-        .count({ where: { name: input.name, userId: ctx.session.user.id } })
+        .count({
+          where: { name: input.name, userId: ctx.session.user.id },
+          cacheStrategy: { swr: 60, ttl: 60 },
+        })
         .catch(() => {
           return null;
         });
@@ -80,6 +84,7 @@ export const tablesRouter = createTRPCRouter({
             id: input.id,
             userId: ctx.session.user.id,
           },
+          cacheStrategy: { swr: 60, ttl: 60 },
         })
         .catch(() => {
           throw new TRPCError({
@@ -110,6 +115,7 @@ export const tablesRouter = createTRPCRouter({
             id: input.id,
             userId: ctx.session.user.id,
           },
+          cacheStrategy: { swr: 60, ttl: 60 },
         })
         .catch(() => {
           throw new TRPCError({
@@ -119,7 +125,10 @@ export const tablesRouter = createTRPCRouter({
         });
 
       const count = await prisma.tables
-        .count({ where: { name: input.name, userId: ctx.session.user.id } })
+        .count({
+          where: { name: input.name, userId: ctx.session.user.id },
+          cacheStrategy: { swr: 60, ttl: 60 },
+        })
         .catch(() => {
           return null;
         });
@@ -160,6 +169,7 @@ export const tablesRouter = createTRPCRouter({
             id: input.id,
             userId: ctx.session.user.id,
           },
+          cacheStrategy: { swr: 60, ttl: 60 },
         })
         .catch(() => {
           throw new TRPCError({
